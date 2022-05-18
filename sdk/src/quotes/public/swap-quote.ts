@@ -45,13 +45,14 @@ export type SwapQuote = {
   estimatedAmountOut: u64;
 } & SwapInput;
 
+// TODO: Add simpler quote functions and add other types of quotes (bound by output token, sqrt-price-limit etc)
+
 /**
  * TODO: Bug - The quote swap loop will ignore the first initialized tick of the next array on array traversal
  * if the tick is on offset 0.
  * TODO: Build out a comprhensive integ test-suite for all tick traversal. The test suite would confirm
  * edge cases for both smart-contract and quote (they must equal). The original test-cases in SDK can be ported
  * over in this effort.
- * TODO: Think about other types of quote that we want to write (ex. limit by price to get trade amount etc)
  *
  * Get an estimated quote of a swap
  *
@@ -59,7 +60,7 @@ export type SwapQuote = {
  * @param param a SwapQuoteParam object detailing parameters of the swap
  * @return a SwapQuote on the estimated amountIn & amountOut of the swap and a SwapInput to use on the swap instruction.
  */
-export function swapQuoteByInputToken(param: SwapQuoteParam): SwapQuote {
+export function swapQuoteWithParams(param: SwapQuoteParam): SwapQuote {
   const {
     whirlpoolAddress,
     swapTokenMint,

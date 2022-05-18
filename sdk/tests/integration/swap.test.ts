@@ -10,7 +10,7 @@ import {
   MAX_SQRT_PRICE,
   MIN_SQRT_PRICE,
   TickArrayData,
-  swapQuoteByInputToken,
+  swapQuoteWithParams,
   WhirlpoolData,
   PoolUtil,
   PriceMath,
@@ -559,7 +559,7 @@ describe("swap", () => {
     );
     const tickArraySequenceData = await fetcher.listTickArrays(tickArrayAddresses, true);
 
-    const quote = swapQuoteByInputToken({
+    const quote = swapQuoteWithParams({
       whirlpoolAddress: whirlpoolKey,
       swapTokenMint: whirlpoolData.tokenMintB,
       whirlpoolData,
