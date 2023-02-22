@@ -22,11 +22,13 @@ pub struct SetRewardEmissions<'info> {
     pub reward_vault: Account<'info, TokenAccount>,
 }
 
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
 pub fn handler(
     ctx: Context<SetRewardEmissions>,
     reward_index: u8,
     emissions_per_second_x64: u128,
-) -> ProgramResult {
+) -> Result<()> {
     let whirlpool = &ctx.accounts.whirlpool;
     let reward_vault = &ctx.accounts.reward_vault;
 

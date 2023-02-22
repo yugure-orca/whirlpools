@@ -13,6 +13,8 @@ pub struct SetRewardAuthorityBySuperAuthority<'info> {
     #[account(address = whirlpools_config.reward_emissions_super_authority)]
     pub reward_emissions_super_authority: Signer<'info>,
 
+    // to avoid compile error...
+    /// CHECK: the account that will be new authority can be arbitrary
     pub new_reward_authority: UncheckedAccount<'info>,
 }
 
@@ -21,7 +23,10 @@ pub struct SetRewardAuthorityBySuperAuthority<'info> {
 pub fn handler(
     ctx: Context<SetRewardAuthorityBySuperAuthority>,
     reward_index: u8,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     Ok(ctx.accounts.whirlpool.update_reward_authority(
         reward_index as usize,
         ctx.accounts.new_reward_authority.key(),

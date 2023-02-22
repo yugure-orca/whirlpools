@@ -1,4 +1,9 @@
+// v0.22.0 breaking, add Anchor's Result (anchor's Result = std Result<T, Error>)
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+// https://github.com/coral-xyz/anchor/pull/1462
+use anchor_lang::prelude::Result;
 use crate::errors::ErrorCode;
+
 use crate::state::*;
 use std::cell::RefMut;
 
@@ -39,11 +44,14 @@ impl<'info> SwapTickSequence<'info> {
         array_index: usize,
         tick_index: i32,
         tick_spacing: u16,
-    ) -> Result<&Tick, ErrorCode> {
+    ) -> Result<&Tick> {
+        // use Anchor Result
+
         let array = self.arrays.get(array_index);
         match array {
             Some(array) => array.get_tick(tick_index, tick_spacing),
-            _ => Err(ErrorCode::TickArrayIndexOutofBounds),
+            // add into (errors:ErrorCode to anchor_lang::error::Error)
+            _ => Err(ErrorCode::TickArrayIndexOutofBounds.into()),
         }
     }
 
@@ -64,14 +72,17 @@ impl<'info> SwapTickSequence<'info> {
         tick_index: i32,
         tick_spacing: u16,
         update: &TickUpdate,
-    ) -> Result<(), ErrorCode> {
+    ) -> Result<()> {
+        // use Anchor Result
+
         let array = self.arrays.get_mut(array_index);
         match array {
             Some(array) => {
                 array.update_tick(tick_index, tick_spacing, update)?;
                 Ok(())
             }
-            _ => Err(ErrorCode::TickArrayIndexOutofBounds),
+            // add into (errors:ErrorCode to anchor_lang::error::Error)
+            _ => Err(ErrorCode::TickArrayIndexOutofBounds.into()),
         }
     }
 
@@ -80,11 +91,14 @@ impl<'info> SwapTickSequence<'info> {
         array_index: usize,
         tick_index: i32,
         tick_spacing: u16,
-    ) -> Result<isize, ErrorCode> {
+    ) -> Result<isize> {
+        // use Anchor Result
+
         let array = self.arrays.get(array_index);
         match array {
             Some(array) => array.tick_offset(tick_index, tick_spacing),
-            _ => Err(ErrorCode::TickArrayIndexOutofBounds),
+            // add into (errors:ErrorCode to anchor_lang::error::Error)
+            _ => Err(ErrorCode::TickArrayIndexOutofBounds.into()),
         }
     }
 
@@ -108,7 +122,9 @@ impl<'info> SwapTickSequence<'info> {
         tick_spacing: u16,
         a_to_b: bool,
         start_array_index: usize,
-    ) -> Result<(usize, i32), ErrorCode> {
+    ) -> Result<(usize, i32)> {
+        // use Anchor Result
+
         let ticks_in_array = TICK_ARRAY_SIZE * tick_spacing as i32;
         let mut search_index = tick_index;
         let mut array_index = start_array_index;
@@ -118,7 +134,8 @@ impl<'info> SwapTickSequence<'info> {
             // If we get to the end of the array sequence and next_index is still not found, throw error
             let next_array = match self.arrays.get(array_index) {
                 Some(array) => array,
-                None => return Err(ErrorCode::TickArraySequenceInvalidIndex),
+                // add into (errors:ErrorCode to anchor_lang::error::Error)
+                None => return Err(ErrorCode::TickArraySequenceInvalidIndex.into()),
             };
 
             let next_index =

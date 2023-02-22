@@ -9,6 +9,10 @@ use crate::{
 };
 use std::convert::TryInto;
 
+// use Anchor Result
+use anchor_lang::prelude::Result;
+
+
 #[derive(Debug)]
 pub struct PostSwapUpdate {
     pub amount_a: u64,
@@ -29,7 +33,9 @@ pub fn swap(
     amount_specified_is_input: bool,
     a_to_b: bool,
     timestamp: u64,
-) -> Result<PostSwapUpdate, ErrorCode> {
+) -> Result<PostSwapUpdate> {
+    // use Anchor Result
+
     if sqrt_price_limit < MIN_SQRT_PRICE_X64 || sqrt_price_limit > MAX_SQRT_PRICE_X64 {
         return Err(ErrorCode::SqrtPriceOutOfBounds.into());
     }
@@ -233,7 +239,9 @@ fn calculate_update(
     fee_growth_global_a: u128,
     fee_growth_global_b: u128,
     reward_infos: &[WhirlpoolRewardInfo; NUM_REWARDS],
-) -> Result<(TickUpdate, u128), ErrorCode> {
+) -> Result<(TickUpdate, u128)> {
+    // use Anchor Result
+
     // Use updated fee_growth for crossing tick
     // Use -liquidity_net if going left, +liquidity_net going right
     let signed_liquidity_net = if a_to_b {

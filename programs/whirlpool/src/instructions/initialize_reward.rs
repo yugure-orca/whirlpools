@@ -31,7 +31,9 @@ pub struct InitializeReward<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn handler(ctx: Context<InitializeReward>, reward_index: u8) -> ProgramResult {
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+pub fn handler(ctx: Context<InitializeReward>, reward_index: u8) -> Result<()> {
     let whirlpool = &mut ctx.accounts.whirlpool;
 
     Ok(whirlpool.initialize_reward(

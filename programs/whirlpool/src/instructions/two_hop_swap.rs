@@ -64,14 +64,18 @@ pub struct TwoHopSwap<'info> {
     pub tick_array_two_2: AccountLoader<'info, TickArray>,
 
     #[account(seeds = [b"oracle", whirlpool_one.key().as_ref()],bump)]
-    /// Oracle is currently unused and will be enabled on subsequent updates
+    // add CHECK: word
+    /// CHECK: Oracle is currently unused and will be enabled on subsequent updates
     pub oracle_one: UncheckedAccount<'info>,
 
     #[account(seeds = [b"oracle", whirlpool_two.key().as_ref()],bump)]
-    /// Oracle is currently unused and will be enabled on subsequent updates
+    // add CHECK: word
+    /// CHECK: Oracle is currently unused and will be enabled on subsequent updates
     pub oracle_two: UncheckedAccount<'info>,
 }
 
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
 pub fn handler(
     ctx: Context<TwoHopSwap>,
     amount: u64,
@@ -81,7 +85,7 @@ pub fn handler(
     a_to_b_two: bool,
     sqrt_price_limit_one: u128,
     sqrt_price_limit_two: u128,
-) -> ProgramResult {
+) -> Result<()> {
     let clock = Clock::get()?;
     // Update the global reward growth which increases as a function of time.
     let timestamp = to_timestamp_u64(clock.unix_timestamp)?;

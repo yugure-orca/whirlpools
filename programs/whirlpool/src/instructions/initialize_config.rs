@@ -19,7 +19,10 @@ pub fn handler(
     collect_protocol_fees_authority: Pubkey,
     reward_emissions_super_authority: Pubkey,
     default_protocol_fee_rate: u16,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     let config = &mut ctx.accounts.config;
 
     Ok(config.initialize(

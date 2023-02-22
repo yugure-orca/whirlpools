@@ -1,4 +1,4 @@
-import { MathUtil } from "@orca-so/common-sdk";
+import { MathUtil, PDA } from "@orca-so/common-sdk";
 import * as anchor from "@project-serum/anchor";
 import * as assert from "assert";
 import Decimal from "decimal.js";
@@ -162,7 +162,9 @@ describe("initialize_pool", () => {
 
     await assert.rejects(
       toTx(ctx, WhirlpoolIx.initializePoolIx(ctx.program, modifiedPoolInitInfo)).buildAndExecute(),
-      /failed to complete|seeds|unauthorized/
+      // This may be an effect of the bump being calculated first, since the bump is no longer given.
+      // error in the prvious ver: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: Cross-program invocation with unauthorized signer or writable account
+      /custom program error: 0x7d6/ // ConstraintSeeds
     );
   });
 
@@ -177,7 +179,9 @@ describe("initialize_pool", () => {
 
     await assert.rejects(
       toTx(ctx, WhirlpoolIx.initializePoolIx(ctx.program, modifiedPoolInitInfo)).buildAndExecute(),
-      /failed to complete|seeds|unauthorized/
+      // This may be an effect of the bump being calculated first, since the bump is no longer given.
+      // error in the prvious ver: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: Cross-program invocation with unauthorized signer or writable account
+      /custom program error: 0x7d6/ // ConstraintSeeds
     );
   });
 
@@ -258,4 +262,29 @@ describe("initialize_pool", () => {
       /custom program error: 0x177b/ // SqrtPriceOutOfBounds
     );
   });
+
+  it("ignore passed bump", async () => {
+    const { poolInitInfo } = await buildTestPoolParams(ctx, TickSpacing.Standard);
+
+    const whirlpoolPda = poolInitInfo.whirlpoolPda;
+    const validBump = whirlpoolPda.bump;
+    const invalidBump = (validBump + 1) % 256; // +1 shift mod 256
+    const modifiedWhirlpoolPda: PDA = {
+      publicKey: whirlpoolPda.publicKey,
+      bump: invalidBump,
+    };
+
+    const modifiedPoolInitInfo: InitPoolParams = {
+      ...poolInitInfo,
+      whirlpoolPda: modifiedWhirlpoolPda,
+    };
+
+    await toTx(ctx, WhirlpoolIx.initializePoolIx(ctx.program, modifiedPoolInitInfo)).buildAndExecute();
+
+    // check if passed invalid bump was ignored
+    const whirlpool = (await fetcher.getPool(poolInitInfo.whirlpoolPda.publicKey)) as WhirlpoolData;
+    assert.equal(whirlpool.whirlpoolBump, validBump);
+    assert.notEqual(whirlpool.whirlpoolBump, invalidBump);
+  });
+
 });

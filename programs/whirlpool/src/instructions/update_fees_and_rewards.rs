@@ -1,5 +1,4 @@
-use anchor_lang::prelude::ProgramResult;
-
+// prelude re-export Result
 use anchor_lang::prelude::*;
 
 use crate::{
@@ -20,7 +19,9 @@ pub struct UpdateFeesAndRewards<'info> {
     pub tick_array_upper: AccountLoader<'info, TickArray>,
 }
 
-pub fn handler(ctx: Context<UpdateFeesAndRewards>) -> ProgramResult {
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+pub fn handler(ctx: Context<UpdateFeesAndRewards>) -> Result<()> {
     let whirlpool = &mut ctx.accounts.whirlpool;
     let position = &mut ctx.accounts.position;
     let clock = Clock::get()?;

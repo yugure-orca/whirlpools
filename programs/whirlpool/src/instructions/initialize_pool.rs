@@ -21,7 +21,9 @@ pub struct InitializePool<'info> {
         token_mint_b.key().as_ref(),
         tick_spacing.to_le_bytes().as_ref()
       ],
-      bump = bumps.whirlpool_bump,
+      // v0.21.0 breaking, providing a target bump is not allowed (with init)
+      // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-6
+      bump,
       payer = funder,
       space = Whirlpool::LEN)]
     pub whirlpool: Box<Account<'info, Whirlpool>>,
@@ -47,12 +49,15 @@ pub struct InitializePool<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
 pub fn handler(
     ctx: Context<InitializePool>,
-    bumps: WhirlpoolBumps,
+    // to ignore passed bump now (it may be invalid)
+    _bumps: WhirlpoolBumps,
     tick_spacing: u16,
     initial_sqrt_price: u128,
-) -> ProgramResult {
+) -> Result<()> {
     let token_mint_a = ctx.accounts.token_mint_a.key();
     let token_mint_b = ctx.accounts.token_mint_b.key();
 
@@ -61,9 +66,15 @@ pub fn handler(
 
     let default_fee_rate = ctx.accounts.fee_tier.default_fee_rate;
 
+    // we need to verify bump passed is valid to avoid to store invalid bump into the account
+    // case1) verify: ctx.bumps.get("whirlpool") == bump
+    // case2) completely ignore it and use ctx.bumps.get("whirlpool")
+    // The following is case2.
+    let bump = *ctx.bumps.get("whirlpool").unwrap();
+
     Ok(whirlpool.initialize(
         whirlpools_config,
-        bumps.whirlpool_bump,
+        bump,
         tick_spacing,
         initial_sqrt_price,
         default_fee_rate,

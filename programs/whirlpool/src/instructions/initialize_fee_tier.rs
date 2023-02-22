@@ -23,11 +23,13 @@ pub struct InitializeFeeTier<'info> {
     pub system_program: Program<'info, System>,
 }
 
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
 pub fn handler(
     ctx: Context<InitializeFeeTier>,
     tick_spacing: u16,
     default_fee_rate: u16,
-) -> ProgramResult {
+) -> Result<()> {
     Ok(ctx
         .accounts
         .fee_tier

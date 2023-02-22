@@ -16,19 +16,25 @@ pub struct OpenPositionWithMetadata<'info> {
     #[account(mut)]
     pub funder: Signer<'info>,
 
+    // to avoid compile error...
+    /// CHECK: the account that will be the owner of the position can be arbitrary
     pub owner: UncheckedAccount<'info>,
 
     #[account(init,
       payer = funder,
       space = Position::LEN,
       seeds = [b"position".as_ref(), position_mint.key().as_ref()],
-      bump = bumps.position_bump,
+      // v0.21.0 breaking, providing a target bump is not allowed (with init)
+      // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-6
+      bump,
     )]
     pub position: Box<Account<'info, Position>>,
 
     #[account(init,
         payer = funder,
-        space = Mint::LEN,
+        // error: space is not required for initializing an spl account
+        // v0.23.0 breaking, Remove space calculation using ... #1519
+        // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-4
         mint::authority = whirlpool,
         mint::decimals = 0,
     )]
@@ -71,7 +77,10 @@ pub fn handler(
     _bumps: OpenPositionWithMetadataBumps,
     tick_lower_index: i32,
     tick_upper_index: i32,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     let whirlpool = &ctx.accounts.whirlpool;
     let position_mint = &ctx.accounts.position_mint;
     let position = &mut ctx.accounts.position;

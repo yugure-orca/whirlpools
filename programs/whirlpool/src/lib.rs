@@ -22,6 +22,9 @@ pub mod util;
 use crate::state::{OpenPositionBumps, OpenPositionWithMetadataBumps, WhirlpoolBumps};
 use instructions::*;
 
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
 #[program]
 pub mod whirlpool {
     use super::*;
@@ -39,7 +42,7 @@ pub mod whirlpool {
         collect_protocol_fees_authority: Pubkey,
         reward_emissions_super_authority: Pubkey,
         default_protocol_fee_rate: u16,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::initialize_config::handler(
             ctx,
             fee_authority,
@@ -66,7 +69,7 @@ pub mod whirlpool {
         bumps: WhirlpoolBumps,
         tick_spacing: u16,
         initial_sqrt_price: u128,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::initialize_pool::handler(
             ctx,
             bumps,
@@ -87,7 +90,7 @@ pub mod whirlpool {
     pub fn initialize_tick_array(
         ctx: Context<InitializeTickArray>,
         start_tick_index: i32,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::initialize_tick_array::handler(ctx, start_tick_index);
     }
 
@@ -107,7 +110,7 @@ pub mod whirlpool {
         ctx: Context<InitializeFeeTier>,
         tick_spacing: u16,
         default_fee_rate: u16,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::initialize_fee_tier::handler(ctx, tick_spacing, default_fee_rate);
     }
 
@@ -124,7 +127,7 @@ pub mod whirlpool {
     /// - `InvalidRewardIndex` - If the provided reward index doesn't match the lowest uninitialized
     ///                          index in this pool, or exceeds NUM_REWARDS, or
     ///                          all reward slots for this pool has been initialized.
-    pub fn initialize_reward(ctx: Context<InitializeReward>, reward_index: u8) -> ProgramResult {
+    pub fn initialize_reward(ctx: Context<InitializeReward>, reward_index: u8) -> Result<()> {
         return instructions::initialize_reward::handler(ctx, reward_index);
     }
 
@@ -149,7 +152,7 @@ pub mod whirlpool {
         ctx: Context<SetRewardEmissions>,
         reward_index: u8,
         emissions_per_second_x64: u128,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::set_reward_emissions::handler(
             ctx,
             reward_index,
@@ -172,7 +175,7 @@ pub mod whirlpool {
         bumps: OpenPositionBumps,
         tick_lower_index: i32,
         tick_upper_index: i32,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::open_position::handler(
             ctx,
             bumps,
@@ -197,7 +200,7 @@ pub mod whirlpool {
         bumps: OpenPositionWithMetadataBumps,
         tick_lower_index: i32,
         tick_upper_index: i32,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::open_position_with_metadata::handler(
             ctx,
             bumps,
@@ -225,7 +228,7 @@ pub mod whirlpool {
         liquidity_amount: u128,
         token_max_a: u64,
         token_max_b: u64,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::increase_liquidity::handler(
             ctx,
             liquidity_amount,
@@ -253,7 +256,7 @@ pub mod whirlpool {
         liquidity_amount: u128,
         token_min_a: u64,
         token_min_b: u64,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::decrease_liquidity::handler(
             ctx,
             liquidity_amount,
@@ -267,7 +270,7 @@ pub mod whirlpool {
     /// #### Special Errors
     /// - `TickNotFound` - Provided tick array account does not contain the tick for this position.
     /// - `LiquidityZero` - Position has zero liquidity and therefore already has the most updated fees and reward values.
-    pub fn update_fees_and_rewards(ctx: Context<UpdateFeesAndRewards>) -> ProgramResult {
+    pub fn update_fees_and_rewards(ctx: Context<UpdateFeesAndRewards>) -> Result<()> {
         return instructions::update_fees_and_rewards::handler(ctx);
     }
 
@@ -275,7 +278,7 @@ pub mod whirlpool {
     ///
     /// ### Authority
     /// - `position_authority` - authority that owns the token corresponding to this desired position.
-    pub fn collect_fees(ctx: Context<CollectFees>) -> ProgramResult {
+    pub fn collect_fees(ctx: Context<CollectFees>) -> Result<()> {
         return instructions::collect_fees::handler(ctx);
     }
 
@@ -283,7 +286,7 @@ pub mod whirlpool {
     ///
     /// ### Authority
     /// - `position_authority` - authority that owns the token corresponding to this desired position.
-    pub fn collect_reward(ctx: Context<CollectReward>, reward_index: u8) -> ProgramResult {
+    pub fn collect_reward(ctx: Context<CollectReward>, reward_index: u8) -> Result<()> {
         return instructions::collect_reward::handler(ctx, reward_index);
     }
 
@@ -291,7 +294,7 @@ pub mod whirlpool {
     ///
     /// ### Authority
     /// - `collect_protocol_fees_authority` - assigned authority in the WhirlpoolConfig that can collect protocol fees
-    pub fn collect_protocol_fees(ctx: Context<CollectProtocolFees>) -> ProgramResult {
+    pub fn collect_protocol_fees(ctx: Context<CollectProtocolFees>) -> Result<()> {
         return instructions::collect_protocol_fees::handler(ctx);
     }
 
@@ -323,7 +326,7 @@ pub mod whirlpool {
         sqrt_price_limit: u128,
         amount_specified_is_input: bool,
         a_to_b: bool,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::swap::handler(
             ctx,
             amount,
@@ -341,7 +344,7 @@ pub mod whirlpool {
     ///
     /// #### Special Errors
     /// - `ClosePositionNotEmpty` - The provided position account is not empty.
-    pub fn close_position(ctx: Context<ClosePosition>) -> ProgramResult {
+    pub fn close_position(ctx: Context<ClosePosition>) -> Result<()> {
         return instructions::close_position::handler(ctx);
     }
 
@@ -360,7 +363,7 @@ pub mod whirlpool {
     pub fn set_default_fee_rate(
         ctx: Context<SetDefaultFeeRate>,
         default_fee_rate: u16,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::set_default_fee_rate::handler(ctx, default_fee_rate);
     }
 
@@ -379,7 +382,7 @@ pub mod whirlpool {
     pub fn set_default_protocol_fee_rate(
         ctx: Context<SetDefaultProtocolFeeRate>,
         default_protocol_fee_rate: u16,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::set_default_protocol_fee_rate::handler(
             ctx,
             default_protocol_fee_rate,
@@ -398,7 +401,7 @@ pub mod whirlpool {
     ///
     /// #### Special Errors
     /// - `FeeRateMaxExceeded` - If the provided fee_rate exceeds MAX_FEE_RATE.
-    pub fn set_fee_rate(ctx: Context<SetFeeRate>, fee_rate: u16) -> ProgramResult {
+    pub fn set_fee_rate(ctx: Context<SetFeeRate>, fee_rate: u16) -> Result<()> {
         return instructions::set_fee_rate::handler(ctx, fee_rate);
     }
 
@@ -417,7 +420,7 @@ pub mod whirlpool {
     pub fn set_protocol_fee_rate(
         ctx: Context<SetProtocolFeeRate>,
         protocol_fee_rate: u16,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::set_protocol_fee_rate::handler(ctx, protocol_fee_rate);
     }
 
@@ -428,7 +431,7 @@ pub mod whirlpool {
     ///
     /// ### Authority
     /// - "fee_authority" - Set authority that can modify pool fees in the WhirlpoolConfig
-    pub fn set_fee_authority(ctx: Context<SetFeeAuthority>) -> ProgramResult {
+    pub fn set_fee_authority(ctx: Context<SetFeeAuthority>) -> Result<()> {
         return instructions::set_fee_authority::handler(ctx);
     }
 
@@ -439,7 +442,7 @@ pub mod whirlpool {
     /// - "fee_authority" - Set authority that can collect protocol fees in the WhirlpoolConfig
     pub fn set_collect_protocol_fees_authority(
         ctx: Context<SetCollectProtocolFeesAuthority>,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::set_collect_protocol_fees_authority::handler(ctx);
     }
 
@@ -456,7 +459,7 @@ pub mod whirlpool {
     pub fn set_reward_authority(
         ctx: Context<SetRewardAuthority>,
         reward_index: u8,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::set_reward_authority::handler(ctx, reward_index);
     }
 
@@ -473,7 +476,7 @@ pub mod whirlpool {
     pub fn set_reward_authority_by_super_authority(
         ctx: Context<SetRewardAuthorityBySuperAuthority>,
         reward_index: u8,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::set_reward_authority_by_super_authority::handler(ctx, reward_index);
     }
 
@@ -485,7 +488,7 @@ pub mod whirlpool {
     /// - "reward_emissions_super_authority" - Set authority that can control reward authorities for all pools in this config space.
     pub fn set_reward_emissions_super_authority(
         ctx: Context<SetRewardEmissionsSuperAuthority>,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::set_reward_emissions_super_authority::handler(ctx);
     }
 
@@ -523,7 +526,7 @@ pub mod whirlpool {
         a_to_b_two: bool,
         sqrt_price_limit_one: u128,
         sqrt_price_limit_two: u128,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         return instructions::two_hop_swap::handler(
             ctx,
             amount,

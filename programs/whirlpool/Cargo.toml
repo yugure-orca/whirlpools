@@ -15,14 +15,29 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = { git = "https://github.com/project-serum/anchor", tag = "v0.20.1", version = "0.20.1", package = "anchor-lang" }
-anchor-spl = { git = "https://github.com/project-serum/anchor", tag = "v0.20.1", version = "0.20.1", package = "anchor-spl" }
-spl-token = { version = "3.1.1", features = ["no-entrypoint"] }
-solana-program = "1.8.12"
+# v0.20.1 --> latest:v0.26.0 (released Dec 16, 2022)
+anchor-lang = { git = "https://github.com/project-serum/anchor", tag = "v0.26.0", package = "anchor-lang" }
+anchor-spl = { git = "https://github.com/project-serum/anchor", tag = "v0.26.0", package = "anchor-spl" }
+# 3.1.1 --> 3.3 or latest:3.5.0 (released Aug 4, 2022)
+# 3.3.0: https://github.com/solana-labs/solana-program-library/releases/tag/token-v3.3.0  (Jan 21, 2022)  (solana sdk: 1.9.2)
+# 3.3.1: https://github.com/solana-labs/solana-program-library/releases/tag/token-v3.3.1  (Aug 3, 2022)
+# 3.5.0: https://github.com/solana-labs/solana-program-library/releases/tag/token-v3.5.0
+spl-token = { version = "3.5.0", features = ["no-entrypoint"] }
+
+# 1.8.12 --> 1.14.16
+# latest: 1.15.2(14 Feb, 2023)
+# 1.14.16 (17 Feb, 2023)
+# 1.14.12 (10 Jan, 2023)
+solana-program = "1.14.16"
 thiserror = "1.0"
 uint = { version = "0.9.1", default-features = false }
 borsh = "0.9.1"
-mpl-token-metadata = { version = "1.2.5", features = ["no-entrypoint"] }
+
+# 1.2.5 --> 1.8.4
+# latest: 1.8.4 (21 Feb, 2023)
+# 2 Feb: bump to solana 1.14.13 & anchor 0.26.0
+# 1.7.0: 26 Jan, 2023
+mpl-token-metadata = { version = "1.8.4", features = ["no-entrypoint"] }
 
 [dev-dependencies]
 proptest = "1.0"

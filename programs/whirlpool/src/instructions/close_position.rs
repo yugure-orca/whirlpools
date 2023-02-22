@@ -9,6 +9,8 @@ use crate::util::{burn_and_close_user_position_token, verify_position_authority}
 pub struct ClosePosition<'info> {
     pub position_authority: Signer<'info>,
 
+    // to avoid compile error...
+    /// CHECK: for receiving rent only
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
@@ -27,7 +29,9 @@ pub struct ClosePosition<'info> {
     pub token_program: Program<'info, Token>,
 }
 
-pub fn handler(ctx: Context<ClosePosition>) -> ProgramResult {
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+pub fn handler(ctx: Context<ClosePosition>) -> Result<()> {
     verify_position_authority(
         &ctx.accounts.position_token_account,
         &ctx.accounts.position_authority,

@@ -31,7 +31,10 @@ impl WhirlpoolsConfig {
         collect_protocol_fees_authority: Pubkey,
         reward_emissions_super_authority: Pubkey,
         default_protocol_fee_rate: u16,
-    ) -> Result<(), ErrorCode> {
+        // v0.22.0 breaking, add Anchor's Result (anchor's Result = std Result<T, Error>)
+        // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+        // https://github.com/coral-xyz/anchor/pull/1462
+    ) -> Result<()> {
         self.fee_authority = fee_authority;
         self.collect_protocol_fees_authority = collect_protocol_fees_authority;
         self.reward_emissions_super_authority = reward_emissions_super_authority;
@@ -50,7 +53,10 @@ impl WhirlpoolsConfig {
     pub fn update_default_protocol_fee_rate(
         &mut self,
         default_protocol_fee_rate: u16,
-    ) -> Result<(), ErrorCode> {
+        // v0.22.0 breaking, add Anchor's Result (anchor's Result = std Result<T, Error>)
+        // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+        // https://github.com/coral-xyz/anchor/pull/1462
+    ) -> Result<()> {
         if default_protocol_fee_rate > MAX_PROTOCOL_FEE_RATE {
             return Err(ErrorCode::ProtocolFeeRateMaxExceeded.into());
         }

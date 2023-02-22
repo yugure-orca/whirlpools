@@ -61,7 +61,11 @@ impl Position {
         position_mint: Pubkey,
         tick_lower_index: i32,
         tick_upper_index: i32,
-    ) -> Result<(), ErrorCode> {
+    ) -> Result<()> {
+        // v0.22.0 breaking, add Anchor's Result (anchor's Result = std Result<T, Error>)
+        // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+        // https://github.com/coral-xyz/anchor/pull/1462
+
         if !Tick::check_is_usable_tick(tick_lower_index, whirlpool.tick_spacing)
             || !Tick::check_is_usable_tick(tick_upper_index, whirlpool.tick_spacing)
             || tick_lower_index >= tick_upper_index

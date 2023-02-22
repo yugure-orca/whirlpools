@@ -18,7 +18,10 @@ pub fn update_and_swap_whirlpool<'info>(
     swap_update: PostSwapUpdate,
     is_token_fee_in_a: bool,
     reward_last_updated_timestamp: u64,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     whirlpool.update_after_swap(
         swap_update.next_liquidity,
         swap_update.next_tick_index,
@@ -55,7 +58,11 @@ fn perform_swap<'info>(
   amount_a: u64,
   amount_b: u64,
   a_to_b: bool,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
+
   // Transfer from user to pool
   let deposit_account_user;
   let deposit_account_pool;

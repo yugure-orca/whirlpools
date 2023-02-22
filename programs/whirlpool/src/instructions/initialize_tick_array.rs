@@ -21,7 +21,9 @@ pub struct InitializeTickArray<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handler(ctx: Context<InitializeTickArray>, start_tick_index: i32) -> ProgramResult {
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+pub fn handler(ctx: Context<InitializeTickArray>, start_tick_index: i32) -> Result<()> {
     let mut tick_array = ctx.accounts.tick_array.load_init()?;
     Ok(tick_array.initialize(&ctx.accounts.whirlpool, start_tick_index)?)
 }

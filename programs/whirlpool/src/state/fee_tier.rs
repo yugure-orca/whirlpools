@@ -17,14 +17,20 @@ impl FeeTier {
         whirlpools_config: &Account<WhirlpoolsConfig>,
         tick_spacing: u16,
         default_fee_rate: u16,
-    ) -> Result<(), ErrorCode> {
+        // v0.22.0 breaking, add Anchor's Result (anchor's Result = std Result<T, Error>)
+        // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+        // https://github.com/coral-xyz/anchor/pull/1462
+    ) -> Result<()> {
         self.whirlpools_config = whirlpools_config.key();
         self.tick_spacing = tick_spacing;
         self.update_default_fee_rate(default_fee_rate)?;
         Ok(())
     }
 
-    pub fn update_default_fee_rate(&mut self, default_fee_rate: u16) -> Result<(), ErrorCode> {
+    // v0.22.0 breaking, add Anchor's Result (anchor's Result = std Result<T, Error>)
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+    // https://github.com/coral-xyz/anchor/pull/1462
+    pub fn update_default_fee_rate(&mut self, default_fee_rate: u16) -> Result<()> {
         if default_fee_rate > MAX_FEE_RATE {
             return Err(ErrorCode::FeeRateMaxExceeded.into());
         }

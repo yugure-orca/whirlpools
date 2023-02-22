@@ -1,8 +1,11 @@
 use std::num::TryFromIntError;
 
-use anchor_lang::error;
+// prelude re-export error::*
+use anchor_lang::prelude::*;
 
-#[error]
+// v0.22.0 breaking, error --> error_code
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+#[error_code]
 #[derive(PartialEq)]
 pub enum ErrorCode {
     #[msg("Enum value could not be converted")]

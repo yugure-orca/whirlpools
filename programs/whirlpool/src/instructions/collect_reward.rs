@@ -46,7 +46,10 @@ pub struct CollectReward<'info> {
 /// - `Ok`: Reward tokens at the specified reward index have been successfully harvested
 /// - `Err`: `RewardNotInitialized` if the specified reward has not been initialized
 ///          `InvalidRewardIndex` if the reward index is not 0, 1, or 2
-pub fn handler(ctx: Context<CollectReward>, reward_index: u8) -> ProgramResult {
+pub fn handler(ctx: Context<CollectReward>, reward_index: u8) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     verify_position_authority(
         &ctx.accounts.position_token_account,
         &ctx.accounts.position_authority,

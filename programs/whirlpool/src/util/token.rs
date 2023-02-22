@@ -11,7 +11,12 @@ pub fn transfer_from_owner_to_vault<'info>(
     token_vault: &Account<'info, TokenAccount>,
     token_program: &Program<'info, Token>,
     amount: u64,
-) -> Result<(), ProgramError> {
+) -> Result<()> {
+    // v0.22.0 breaking, add Anchor's Result (anchor's Result = std Result<T, Error>)
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+    // https://github.com/coral-xyz/anchor/pull/1462
+
+    // return Result<()>
     token::transfer(
         CpiContext::new(
             token_program.to_account_info(),
@@ -31,7 +36,12 @@ pub fn transfer_from_vault_to_owner<'info>(
     token_owner_account: &Account<'info, TokenAccount>,
     token_program: &Program<'info, Token>,
     amount: u64,
-) -> Result<(), ProgramError> {
+) -> Result<()> {
+    // v0.22.0 breaking, add Anchor's Result (anchor's Result = std Result<T, Error>)
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+    // https://github.com/coral-xyz/anchor/pull/1462
+
+    // return Result<()>
     token::transfer(
         CpiContext::new_with_signer(
             token_program.to_account_info(),
@@ -52,7 +62,10 @@ pub fn burn_and_close_user_position_token<'info>(
     position_mint: &Account<'info, Mint>,
     position_token_account: &Account<'info, TokenAccount>,
     token_program: &Program<'info, Token>,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     // Burn a single token in user account
     invoke_signed(
         &burn_checked(
@@ -89,7 +102,9 @@ pub fn burn_and_close_user_position_token<'info>(
             token_authority.to_account_info(),
         ],
         &[],
-    )
+    )?;
+    // solve type mismatch (invoke_signed returns ProgramResult)
+    Ok(())
 }
 
 pub fn mint_position_token_and_remove_authority<'info>(
@@ -97,7 +112,10 @@ pub fn mint_position_token_and_remove_authority<'info>(
     position_mint: &Account<'info, Mint>,
     position_token_account: &Account<'info, TokenAccount>,
     token_program: &Program<'info, Token>,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     mint_position_token(
         whirlpool,
         position_mint,
@@ -122,7 +140,10 @@ pub fn mint_position_token_with_metadata_and_remove_authority<'info>(
     token_program: &Program<'info, Token>,
     system_program: &Program<'info, System>,
     rent: &Sysvar<'info, Rent>,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     mint_position_token(
         whirlpool,
         position_mint,
@@ -170,7 +191,10 @@ fn mint_position_token<'info>(
     position_mint: &Account<'info, Mint>,
     position_token_account: &Account<'info, TokenAccount>,
     token_program: &Program<'info, Token>,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     invoke_signed(
         &mint_to(
             token_program.key,
@@ -187,14 +211,20 @@ fn mint_position_token<'info>(
             token_program.to_account_info(),
         ],
         &[&whirlpool.seeds()],
-    )
+    )?;
+
+    // solve type mismatch (invoke_signed returns ProgramResult)
+    Ok(())
 }
 
 fn remove_position_token_mint_authority<'info>(
     whirlpool: &Account<'info, Whirlpool>,
     position_mint: &Account<'info, Mint>,
     token_program: &Program<'info, Token>,
-) -> ProgramResult {
+) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     invoke_signed(
         &set_authority(
             token_program.key,
@@ -210,5 +240,8 @@ fn remove_position_token_mint_authority<'info>(
             token_program.to_account_info(),
         ],
         &[&whirlpool.seeds()],
-    )
+    )?;
+
+    // solve type mismatch (invoke_signed returns ProgramResult)
+    Ok(())
 }

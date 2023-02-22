@@ -8,10 +8,15 @@ use std::convert::TryFrom;
 
 use crate::errors::ErrorCode;
 
+// use Anchor Result
+use anchor_lang::prelude::Result;
+
 pub fn verify_position_authority<'info>(
     position_token_account: &TokenAccount,
     position_authority: &Signer<'info>,
-) -> Result<(), ProgramError> {
+) -> Result<()> {
+    // use Anchor Result
+
     // Check token authority using validate_owner method...
     match position_token_account.delegate {
         COption::Some(ref delegate) if position_authority.key == delegate => {
@@ -31,7 +36,9 @@ pub fn verify_position_authority<'info>(
 fn validate_owner(
     expected_owner: &Pubkey,
     owner_account_info: &AccountInfo,
-) -> Result<(), ProgramError> {
+) -> Result<()> {
+    // use Anchor Result
+
     if expected_owner != owner_account_info.key || !owner_account_info.is_signer {
         return Err(ErrorCode::MissingOrInvalidDelegate.into());
     }
@@ -39,6 +46,9 @@ fn validate_owner(
     Ok(())
 }
 
-pub fn to_timestamp_u64(t: i64) -> Result<u64, ErrorCode> {
-    u64::try_from(t).or(Err(ErrorCode::InvalidTimestampConversion))
+pub fn to_timestamp_u64(t: i64) -> Result<u64> {
+    // use Anchor Result
+
+    // add into (errors:ErrorCode to anchor_lang::error::Error)
+    u64::try_from(t).or(Err(ErrorCode::InvalidTimestampConversion.into()))
 }

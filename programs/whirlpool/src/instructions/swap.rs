@@ -42,10 +42,13 @@ pub struct Swap<'info> {
     pub tick_array_2: AccountLoader<'info, TickArray>,
 
     #[account(seeds = [b"oracle", whirlpool.key().as_ref()],bump)]
-    /// Oracle is currently unused and will be enabled on subsequent updates
+    // add CHECK: word
+    /// CHECK: Oracle is currently unused and will be enabled on subsequent updates
     pub oracle: UncheckedAccount<'info>,
 }
 
+// v0.22.0 breaking, ProgramResult --> Result<()>
+// https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
 pub fn handler(
     ctx: Context<Swap>,
     amount: u64,
@@ -53,7 +56,7 @@ pub fn handler(
     sqrt_price_limit: u128,
     amount_specified_is_input: bool,
     a_to_b: bool, // Zero for one
-) -> ProgramResult {
+) -> Result<()> {
     let whirlpool = &mut ctx.accounts.whirlpool;
     let clock = Clock::get()?;
     // Update the global reward growth which increases as a function of time.

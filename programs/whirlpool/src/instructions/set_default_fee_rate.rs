@@ -16,7 +16,10 @@ pub struct SetDefaultFeeRate<'info> {
 /*
    Updates the default fee rate on a FeeTier object.
 */
-pub fn handler(ctx: Context<SetDefaultFeeRate>, default_fee_rate: u16) -> ProgramResult {
+pub fn handler(ctx: Context<SetDefaultFeeRate>, default_fee_rate: u16) -> Result<()> {
+    // v0.22.0 breaking, ProgramResult --> Result<()>
+    // https://github.com/coral-xyz/anchor/blob/9044b9b8cde7be87cc9c1ca1867b9a5f2791e103/CHANGELOG.md#breaking-5
+
     Ok(ctx
         .accounts
         .fee_tier
