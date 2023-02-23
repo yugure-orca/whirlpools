@@ -222,7 +222,7 @@ impl SwapTestFixture {
         &self,
         tick_sequence: &mut SwapTickSequence,
         next_timestamp: u64,
-    ) -> Result<PostSwapUpdate, ErrorCode> {
+    ) -> Result<PostSwapUpdate> {
         swap(
             &self.whirlpool,
             tick_sequence,
